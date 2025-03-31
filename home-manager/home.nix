@@ -34,6 +34,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    pkgs.eza
   ];
 
   programs = {
@@ -43,6 +44,11 @@
       bashrcExtra = ''
        eval "$(zoxide init bash)"
       '';
+      shellAliases = {
+        "ls" = "eza";
+        "sl" = "eza";
+        "hm" = "vim ~/Projects/salenix/home-manager/home.nix";
+      };
       
       };
 
@@ -79,6 +85,7 @@
         "[](fg:#212736 bg:#1d2230)"
         "$time"
         "[ ](fg:#1d2230)"
+        "$nix_shell"
         "\n$character"
         ];
         directory = {
@@ -107,6 +114,10 @@
           time_format = "%R"; # Hour:Minute Format
           style = "bg:#1d2230";
           format = "[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)";
+        };
+        nix_shell = {
+          disabled = false;
+          format = "[$symbol$state](bold blue) nix-shell";
         };
        
         rust = {
