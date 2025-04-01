@@ -1,5 +1,20 @@
 { config, pkgs, lib, ... }:
 
+let
+  # --- Yhteiset komentojen aliakset shelleille
+  shell-alias-set = {
+        "ls" = "eza";
+        "sl" = "eza";
+        "hm" = "vim ~/Projects/salenix/home-manager/home.nix";
+        "hms" = "home-manager switch";
+      };
+
+  # --- Yhteiset rc-tiedostojen komennot (.bashrc, .zshrc jne)
+  shell-init-rc-common = ''
+       eval "$(zoxide init bash)"
+   '';
+in
+
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -41,17 +56,21 @@
 
     bash = {
       enable = true;
-      bashrcExtra = ''
-       eval "$(zoxide init bash)"
-      '';
-      shellAliases = {
-        "ls" = "eza";
-        "sl" = "eza";
-        "hm" = "vim ~/Projects/salenix/home-manager/home.nix";
-        "hms" = "home-manager switch";
-      };
+      bashrcExtra = shell-init-rc-common;
+      shellAliases = shell-alias-set;
       
-      };
+    };
+
+    zsh = {
+      enable = true;
+      initExtra = shell-init-rc-common;
+      shellAliases = shell-alias-set;
+      autosuggestion = {
+         enable = true;
+       };
+      
+    };
+
 
     emacs = {
       enable = true;
@@ -68,7 +87,7 @@
 
     starship =
      let
-      programming-language-format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+      programming-language-format = "[[ $symbol  ]]()";
       programming-symbol = smbol: {
           symbol = smbol;
           style = "bg:#212736";
