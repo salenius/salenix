@@ -66,7 +66,20 @@
       };
     };
 
-    starship = {
+    starship =
+     let
+      programming-language-format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
+      programming-symbol = smbol: {
+          symbol = smbol;
+          style = "bg:#212736";
+          format = programming-language-format;
+        };
+      # ----- Kansiopolkujen värit -----
+      iron-color = "#e3e5e5"; # Alkuperäinen polun väri, itselle liian tumma taustaan nähden
+      white-color = "#fdfdfd";
+
+     in
+     {
       enable = true;
       settings = {
         "$schema" = "https://starship.rs/config-schema.json";
@@ -94,7 +107,7 @@
         "\n$character"
         ];
         directory = {
-          style = "fg:#e3e5e5 bg:#769ff0";
+          style = "fg:${white-color} bg:#769ff0";
           format = "[ $path ]($style)";
           truncation_length = 3;
           truncation_symbol = "…/";
@@ -124,24 +137,12 @@
           disabled = false;
           format = "[$symbol$state](bold blue) nix-shell";
         };
+
+        rust = programming-symbol "";
+        golang = programming-symbol "";
+        php = programming-symbol "";
        
-        rust = {
-          symbol = "";
-          style = "bg:#212736";
-          format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
-        };
 
-        golang = {
-          symbol = "";
-          style = "bg:#212736";
-          format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
-        };
-
-        php = {
-          symbol = "";
-          style = "bg:#212736";
-          format = "[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)";
-        };
       };
     };
   }; 
