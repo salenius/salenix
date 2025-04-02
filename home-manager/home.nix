@@ -7,12 +7,14 @@ let
   shell-init-rc-common = ''
        eval "$(zoxide init bash)"
    '';
+  tmux-enabled = true;
 in
 
 {
 
   imports = [
      ./modules/starship.nix
+     ./modules/editor/emacs.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -50,7 +52,10 @@ in
     # '')
     pkgs.eza
     pkgs.tmux
-  ];
+  ] ++ (if tmux-enabled then [
+   pkgs.zsh-prezto # Automaattinen tmux-launch 
+  ] else []);
+    
 
   programs = {
 
@@ -68,11 +73,14 @@ in
       autosuggestion = {
          enable = true;
        };
-      
+      prezto = {
+        enable = true;
+        tmux.autoStartLocal = if tmux-enabled then true else null;
+      };
     };
 
     tmux = {
-      enable = true;
+      enable = tmux-enabled;
       mouse = true;
       extraConfig = ''
       set -g visual-bell off
@@ -100,9 +108,13 @@ in
     };
 
 
-    emacs = {
-      enable = true;
-    };
+    #emacs.enable = true;
+    #emacs.extraPackages = epkgs: with epkgs; [
+    #  evil
+    #  dracula-theme
+    #  haskell-mode
+    #];
+    emacs.package = pkgs.emacs-gtk;
 
     git = {
       enable = true;
@@ -148,7 +160,8 @@ in
   #
   home.sessionVariables = {
     # EDITOR = "emacs";
-    TERMINAL = "alacritty";
+    # NOTE: Ei riitä tekemään Alacrittystä oletusterminaalia, piti säätää manuaalisesti vielä koneella
+    TERMINAL = "alacritty"; 
   };
 
   # Let Home Manager install and manage itself.
