@@ -146,16 +146,22 @@
      ffmpeg-full
 
      # Omat skriptit globaaliin käyttöön
-     (pkgs.writeShellScriptBin "mp4-to-gif" ''
+     (writeShellScriptBin "mp4-to-gif" ''
      ffmpeg -i $1 "$\{1%.mp4\}.gif" 
      '')
      
-     (pkgs.writeShellScriptBin "videon-pituus" ''
+     (writeShellScriptBin "videon-pituus" ''
      ffprobe -i $1 -show_entries format=duration -v quiet -of csv="p=0"
      '')
-   ];
 
-  ### Shell configurations
+     # Salenix-configuraation buildien wrapper/alias käytännössä
+     # laita argumentiksi switch yleisessä tapauksessa. Tämä on tehty
+     # koska zsh ei tykkää #-merkistä, minkä vuoksi laitettu lainausmerkkeihin
+     # ja käytetään HOME-ympäristömuuttujaa apuna
+     (writeShellScriptBin "salenix-rebuild" ''
+     nixos-rebuild $1 --flake "$HOME/Projects/salenix/nixos#tommiSetup" --impure
+     '')
+  ];
 
   environment.shells = with pkgs; [
 
