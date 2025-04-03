@@ -52,6 +52,7 @@ in
     # '')
     pkgs.eza
     pkgs.tmux
+    pkgs.bat
   ] ++ (if tmux-enabled then [
    pkgs.zsh-prezto # Automaattinen tmux-launch 
   ] else []);
