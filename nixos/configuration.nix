@@ -142,6 +142,17 @@
 
      starship # Tekee command promptista nukean nakoisen
      nerdfonts # Starshipin prompteista upean nakoisia
+
+     ffmpeg-full
+
+     # Omat skriptit globaaliin käyttöön
+     (pkgs.writeShellScriptBin "mp4-to-gif" ''
+     ffmpeg -i $1 "$\{1%.mp4\}.gif" 
+     '')
+     
+     (pkgs.writeShellScriptBin "videon-pituus" ''
+     ffprobe -i $1 -show_entries format=duration -v quiet -of csv="p=0"
+     '')
    ];
 
   ### Shell configurations
