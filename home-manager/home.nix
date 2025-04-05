@@ -15,6 +15,7 @@ in
   imports = [
      ./modules/starship.nix
      ./modules/editor/emacs.nix
+     ./modules/tmux.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
