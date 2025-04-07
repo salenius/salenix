@@ -58,6 +58,20 @@ in
    pkgs.zsh-prezto # Automaattinen tmux-launch 
   ] else []);
     
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (pkgs.lib.getName pkg) [
+      #"steam"
+      #"steam-run"
+      #"steam-original"
+      "dropbox"
+    ];
+
+  # Dropbox tulee asettaa manuaalisesti päälle, koska
+  # muuten pienessä laitteessa (virtuaalikone yms)
+  # tallennustila saattaa täyttyä nopeasti
+  services.dropbox.enable = true;
+
+
 
   programs = {
 

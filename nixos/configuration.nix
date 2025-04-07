@@ -55,6 +55,11 @@
   services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
 
+
+  # Binäärivälimuisti Haskell.nixiä varten, jotta
+  # vältytään liian monelta GHC:n kopiolta
+
+
   # Home manager
   #home-manager.users.tommi = { pkgs, ... }: {
   #  home.packages = [ pkgs.atool pkgs.httpie ];
