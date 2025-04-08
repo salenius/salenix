@@ -13,10 +13,19 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       #(import "${home-manager}/nixos")
-     <musnix>
+      #./audiosetup.nix
+     #<musnix>
     ];
 
   musnix.enable = true;
+  musnix.soundcardPciId = "00:05.0"; # VM-koneen spesifi!
+  # Tämän tulisi teknisesti olla true, mutta testattu VirtualBoxin
+  # virtuaalikoneella false-arvolla, ja näyttäisi toimivan siellä
+  # ainakin periaatteessa. Jos musatuotannossa havaitaan myöhemmin
+  # ongelmia, kokeile muuttaa tätä silloin true => huomioi, että
+  # kääntää kernelin, mikä voi viedä tolkuttomasti aikaa
+  musnix.kernel.realtime = false;
+  musnix.rtirq.enable = true;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -79,12 +88,8 @@
   # services.printing.enable = true;
 
   # Enable sound.
-  #hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.enable = false; # Virheviesti jos true
   # OR
-   services.pipewire = {
-     enable = true;
-     pulse.enable = true;
-   };
 
   #services.jack = {
   #	   jackd.enable = true;
@@ -101,15 +106,15 @@
   #	  };
 
   # # rtkit is optional but recommended
-  #security.rtkit.enable = true;
-  #services.pipewire = {
-  #  enable = true; # if not already enabled
-  #  alsa.enable = true;
-  #  alsa.support32Bit = true;
-  #  pulse.enable = true;
-  #  # If you want to use JACK applications, uncomment this
-  #  #jack.enable = true;
-  #};
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true; # if not already enabled
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    jack.enable = true;
+  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
