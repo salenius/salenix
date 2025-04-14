@@ -4,8 +4,9 @@ let
   # --- Yhteiset komentojen aliakset shelleille
   shell-alias-set = import ./modules/shell-aliases.nix;
   # --- Yhteiset rc-tiedostojen komennot (.bashrc, .zshrc jne)
-  shell-init-rc-common = ''
-       eval "$(zoxide init bash)"
+  shell-init-rc-common = sh: ''
+       eval "$(zoxide init ${sh})"
+       eval "$(direnv hook ${sh})"
    '';
   tmux-enabled = true;
 in
@@ -77,14 +78,14 @@ in
 
     bash = {
       enable = true;
-      bashrcExtra = shell-init-rc-common;
+      bashrcExtra = shell-init-rc-common "bash";
       shellAliases = shell-alias-set;
       
     };
 
     zsh = {
       enable = true;
-      initExtra = shell-init-rc-common;
+      initExtra = shell-init-rc-common "zsh";
       shellAliases = shell-alias-set;
       autosuggestion = {
          enable = true;
@@ -140,6 +141,13 @@ in
         s = "status";
       };
     };
+
+    direnv = {
+      enable = true;
+      enableBashIntegration = true; # see note on other shells below
+      nix-direnv.enable = true;
+    };
+
 
   };
      
