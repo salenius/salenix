@@ -1,0 +1,53 @@
+commit f441b01460d667c3f05975fbf2f2bc7491b07ab7
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 01:14:31 2025 +0300
+
+    clientopacity-patch lisätty onnistuneesti
+
+commit dcda38da1b2f8b77abe4f986a150e10cf3186157
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 01:11:31 2025 +0300
+
+    movestack-patch lisätty onnistuneesti
+
+commit 72a5533c9f5e2579e59999ad7797a52fc523bec5
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 01:08:14 2025 +0300
+
+    pertag-patch lisätty onnistuneesti
+
+commit 09a6164be558ed13e2c44e4eb065525fd78b8917
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 01:07:25 2025 +0300
+
+    uselessgap-patch lisätty onnistuneesti
+
+commit 5c7fda9d523bc36545c37b4ebdbd5ac20efcf688
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 01:03:05 2025 +0300
+
+    status2d-patch lisätty, yksi rivi manuaalisesti muutettu, muuten OK
+
+commit abd6af7befea57e3e22bf5c1296f2c597b5a87be
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 00:51:24 2025 +0300
+
+    alwayscenter-patch käytetty onnistuneesti
+
+commit 5f5d27dc0a4564893c16c0f40c67ce215aa409dc
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 00:49:38 2025 +0300
+
+    statusallmons-patch käytetty onnistuteesti
+
+commit 2aeb9f2231a4b410bd087b142fb15d297ad826d1
+Author: salenius <tommisalenius@gmail.com>
+Date:   Wed Apr 16 00:45:37 2025 +0300
+
+    Vaihdettu terminaali ja Windows-näppäin, patchit ladattu
+
+commit cfb8627a80a334f200f68c2c8f3e384313ebbaf5
+Author: Raymond Cole <rc@wolog.xyz>
+Date:   Mon Oct 28 00:34:55 2024 +0000
+
+    Avoid unsigned integer underflow in drw_text()
