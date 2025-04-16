@@ -55,7 +55,7 @@
   };
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  services.desktopManager.plasma6.enable = true; # Laitetaan toistaiseksi näin
 
 
   # Binäärivälimuisti Haskell.nixiä varten, jotta
@@ -97,6 +97,14 @@
 
   programs.firefox.enable = true;
 
+  # DWM enabloitu, TODO: Siirrä tämä ja Dmenu yms
+  # omaan moduuliinsa
+  services.xserver.windowManager.dwm.enable = true;
+  services.xserver.windowManager.dwm.package = (
+    pkgs.dwm.overrideAttrs {
+    src = /home/tommi/dwm;
+    });
+  
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -108,6 +116,7 @@
      vlc
      #emacs
      alsa-utils
+     feh # Taustakuvat
 
      starship # Tekee command promptista mukavn näköisen
      nerdfonts # Starshipin prompteista upean näköisiä
@@ -119,6 +128,15 @@
      pinentry-curses # GPG-avaimien generointiin vaadittava
      gnupg # Generoi GPG-avaimet
      wl-clipboard # Tallenna salasanat clipboardille suoraan
+
+     # DWM:n käyttöön
+     dmenu
+     picom # Jotta terminaaleista saisi läpinäkyviä
+
+     # Erinomainen kuvakaappaustyökalu. Otetaan käyttöön lisäksi,
+     # koska voi testata DWM:llä mäpätä print screen -näppäimen
+     # tämän ohjelman käynnistämiseen.
+     flameshot
 
      # Omat skriptit globaaliin käyttöön
      (writeShellScriptBin "mp4-to-gif" ''
