@@ -137,6 +137,10 @@ in
         
         # (evil-n "öb" "counsel-ibuffer")
 
+        # Buffereiden valikoimeen counselin sijasta
+        # helmin oma versio
+        (evil-n "öb" "helm-buffers-list")
+
         # Tämä on ollut aiemmin kill-this-buffer
         # mutta Emacsin uuden version myötä tämän
         # käyttö sellaisenaan evil-moden kautta
@@ -164,21 +168,3 @@ in
     
   };
 } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

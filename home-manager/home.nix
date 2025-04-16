@@ -9,6 +9,9 @@ let
        eval "$(direnv hook ${sh})"
    '';
   tmux-enabled = true;
+  shell-session-variables = {
+    EDITOR = "emacs";
+  };
 in
 
 {
@@ -80,7 +83,7 @@ in
       enable = true;
       bashrcExtra = shell-init-rc-common "bash";
       shellAliases = shell-alias-set;
-      
+      sessionVariables = shell-session-variables; 
     };
 
     zsh = {
@@ -90,6 +93,7 @@ in
       autosuggestion = {
          enable = true;
        };
+      sessionVariables = shell-session-variables;
       prezto = {
         enable = true;
         tmux.autoStartLocal = if tmux-enabled then true else null;
@@ -183,7 +187,7 @@ in
   #  /etc/profiles/per-user/tommi/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "emacs";
     # NOTE: Ei riitä tekemään Alacrittystä oletusterminaalia, piti säätää manuaalisesti vielä koneella
     TERMINAL = "alacritty"; 
   };
