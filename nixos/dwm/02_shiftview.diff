@@ -1,0 +1,40 @@
+diff --git a/config.def.h b/config.def.h
+index 93c1f1a..5dc169e 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -64,11 +64,12 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
+ static const char *termcmd[]  = { "alacritty", NULL };
+ 
+ #include "movestack.c"
++#include "shiftview.c" /* Vaihda kahden viereisen tagin välillä */
+ static const Key keys[] = {
+ 	/* modifier                     key        function        argument */
+ 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+ 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+-	{ MODKEY,                       XK_b,      togglebar,      {0} },
++	{ MODKEY,                       XK_t,      togglebar,      {0} },
+ 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+ 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+ 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
+@@ -80,9 +81,9 @@ static const Key keys[] = {
+ 	{ MODKEY,                       XK_Return, zoom,           {0} },
+ 	{ MODKEY,                       XK_Tab,    view,           {0} },
+ 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
+-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
+-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
++	{ MODKEY|ShiftMask,             XK_t,      setlayout,      {.v = &layouts[0]} },
++	{ MODKEY|ShiftMask,             XK_f,      setlayout,      {.v = &layouts[1]} },
++	{ MODKEY|ShiftMask,             XK_m,      setlayout,      {.v = &layouts[2]} },
+ 	{ MODKEY,                       XK_space,  setlayout,      {0} },
+ 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+ 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
+@@ -95,6 +96,8 @@ static const Key keys[] = {
+         { MODKEY|ShiftMask,             XK_s,      changefocusopacity,   {.f = -0.025}},
+ 	{ MODKEY|ShiftMask,             XK_z,      changeunfocusopacity, {.f = +0.025}},
+         { MODKEY|ShiftMask,             XK_x,      changeunfocusopacity, {.f = -0.025}},
++	{ MODKEY,                       XK_n,      shiftview,      {.i = +1 } },
++	{ MODKEY,                       XK_b,      shiftview,      {.i = -1 } },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)

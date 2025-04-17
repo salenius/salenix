@@ -100,10 +100,19 @@
   # DWM enabloitu, TODO: Siirrä tämä ja Dmenu yms
   # omaan moduuliinsa
   services.xserver.windowManager.dwm.enable = true;
-  services.xserver.windowManager.dwm.package = (
-    pkgs.dwm.overrideAttrs {
-    src = /home/tommi/dwm;
-    });
+  # Tämä alla oleva on kommentoitu pois ja korvattu
+  # override-funktion käytöllä, koska otetaan käyttöön
+  # aggregoitu patch, joka on alakansiossa
+  #services.xserver.windowManager.dwm.package = (
+  #  pkgs.dwm.overrideAttrs {
+  #  src = /home/tommi/dwm;
+  #  });
+  services.xserver.windowManager.dwm.package = pkgs.dwm.override {
+    patches = [
+      /home/tommi/Projects/salenix/nixos/dwm/01_first_patch.diff
+      /home/tommi/Projects/salenix/nixos/dwm/02_shiftview.diff
+    ];
+  };
   
   # List packages installed in system profile. To search, run:
   # $ nix search wget
