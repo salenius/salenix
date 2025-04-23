@@ -8,22 +8,37 @@
 
 { config, lib, pkgs, ... }:
 
+let
+  custom-dw-path = true;
+in
+
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./audiosetup.nix
+      ./skriptit.nix
       #(import "${home-manager}/nixos")
     ];
+
+  # Laitettu siksi, koska äänet eivät tällä hetkellä kuulu
+  hardware.enableAllFirmware = true;
+  nixpkgs.config.allowUnfree = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "elitebook"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+
+  # Näillä kahdella pitäisi tapahtua automaattinen WiFi:in yhdistäminen loginin jälkeen
+  # idea saatu täältä: https://github.com/NixOS/nixpkgs/issues/227591
+  networking.interfaces.wlan0.useDHCP = true;
+  networking.wireless.interfaces = ["wlan0"];
 
   # Set your time zone.
   time.timeZone = "Europe/Helsinki";
@@ -58,15 +73,6 @@
   services.desktopManager.plasma6.enable = true; # Laitetaan toistaiseksi näin
 
 
-  # Binäärivälimuisti Haskell.nixiä varten, jotta
-  # vältytään liian monelta GHC:n kopiolta
-
-  programs.gnupg.agent = {
-    enable = true;
-    pinentryPackage = pkgs.pinentry-curses;
-    enableSSHSupport = true;
-  };
-
   
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -84,6 +90,7 @@
      extraGroups = [ 
 	"wheel" 
 	"audio" 
+  "networkmanager"
 	#"jackaudio"  # Enable ‘sudo’ for the user.
 	];
      packages = with pkgs; [
@@ -105,14 +112,20 @@
   # aggregoitu patch, joka on alakansiossa
   #services.xserver.windowManager.dwm.package = (
   #  pkgs.dwm.overrideAttrs {
-  #  src = /home/tommi/dwm;
+  #  src = /home/tommi/Projects/dwm2/dwm;
   #  });
-  services.xserver.windowManager.dwm.package = pkgs.dwm.override {
+  services.xserver.windowManager.dwm.package = if custom-dw-path
+                                               then (
+    pkgs.dwm.overrideAttrs {
+      src = /home/tommi/tmp/dwm;
+    })
+                                               else pkgs.dwm.override {
     patches = [
       /home/tommi/Projects/salenix/nixos/dwm/01_first_patch.diff
       /home/tommi/Projects/salenix/nixos/dwm/02_shiftview.diff
     ];
   };
+
   
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -126,9 +139,16 @@
      #emacs
      alsa-utils
      feh # Taustakuvat
+     ranger # Konfiguraatiot home-manageriin tulevaisuudessa, nyt tässä toistaiseksi
 
      starship # Tekee command promptista mukavn näköisen
      nerdfonts # Starshipin prompteista upean näköisiä
+
+     xclip # Kopioi leikepöydälle
+
+     qutebrowser # Vaihtoehtoinen selain
+
+     gnupg
 
      ffmpeg-full
 
@@ -140,29 +160,21 @@
 
      # DWM:n käyttöön
      dmenu
+     #dwmblocks
+     (dwmblocks.override {
+        conf = /home/tommi/Projects/salenix/nixos/dwm/blocks.def.h;
+      })
+
      picom # Jotta terminaaleista saisi läpinäkyviä
+     # Kun launchataan esim. GUI-ohjelmia terminaalista, ohjelmaa pyörittävä terminaali piilotetaan
+     # sen ajaksi kunnes ohjelma suljetaan
+     devour 
 
      # Erinomainen kuvakaappaustyökalu. Otetaan käyttöön lisäksi,
      # koska voi testata DWM:llä mäpätä print screen -näppäimen
      # tämän ohjelman käynnistämiseen.
      flameshot
 
-     # Omat skriptit globaaliin käyttöön
-     (writeShellScriptBin "mp4-to-gif" ''
-     ffmpeg -i $1 "$\{1%.mp4\}.gif" 
-     '')
-     
-     (writeShellScriptBin "videon-pituus" ''
-     ffprobe -i $1 -show_entries format=duration -v quiet -of csv="p=0"
-     '')
-
-     # Salenix-configuraation buildien wrapper/alias käytännössä
-     # laita argumentiksi switch yleisessä tapauksessa. Tämä on tehty
-     # koska zsh ei tykkää #-merkistä, minkä vuoksi laitettu lainausmerkkeihin
-     # ja käytetään HOME-ympäristömuuttujaa apuna
-     (writeShellScriptBin "salenix-rebuild" ''
-     nixos-rebuild $1 --flake "$HOME/Projects/salenix/nixos#tommiSetup" --impure
-     '')
   ];
 
   environment.shells = with pkgs; [
@@ -173,6 +185,14 @@
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
+
+  programs.gnupg.agent = {
+      enable = true;
+      pinentryPackage = pkgs.pinentry-curses;
+      enableSSHSupport = true;
+    };
+
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
