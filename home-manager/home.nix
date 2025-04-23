@@ -75,8 +75,6 @@ in
   # tallennustila saattaa täyttyä nopeasti
   services.dropbox.enable = true;
 
-
-
   programs = {
 
     bash = {
@@ -100,14 +98,12 @@ in
       };
     };
 
-    tmux = {
-      enable = tmux-enabled;
-      mouse = true;
-      extraConfig = ''
-      set -g visual-bell off
-     '';
-      
-    };
+
+    # Työkalu, joka toimii kuin grep, mutta ilmeisesti tehokkaammin
+    # ja pystyy katsomaan kaikkia kansion tiedostoja eikä vain yhtä
+    # tiedostoa kerrallaan.
+    ripgrep.enable = true;
+
 
     # Alacritty asetukset kopioitu Eric Murphy (Youtubettaja) esimerkistä
     alacritty = {
@@ -125,16 +121,16 @@ in
            history = 10000;
            multiplier = 3; # Kuinka monta riviä yksi skrollaus etenee
          };
+         font = {
+           size = 10.0;
+           normal = {
+             family = "JetBrainsMono NFM";
+             style = "Regular";
+           };
+         };
       };
     };
 
-
-    #emacs.enable = true;
-    #emacs.extraPackages = epkgs: with epkgs; [
-    #  evil
-    #  dracula-theme
-    #  haskell-mode
-    #];
     emacs.package = pkgs.emacs-gtk;
 
     git = {
