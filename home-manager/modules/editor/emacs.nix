@@ -3,7 +3,8 @@
 let
 
   # --- 
-  
+
+   
   evil-macros = ''
 
   (defmacro def-avain (nimi moodi)
@@ -72,18 +73,22 @@ let
 
   var = rec {
 
-	standard-indent-string = toString standard-indent;
+    # Muita teemoja tällä hetkellä zenburn
+    theme = "dracula";
+
+
+	  standard-indent-string = toString standard-indent;
   	startup-not-showing = if startup-screen-off then "t" else "nil";
- 	toolbar-number = if toolbar-off then "-1" else "1";
+ 	  toolbar-number = if toolbar-off then "-1" else "1";
 
-	# ---- Set these
-	standard-indent = 2; 
-  	scratch-viesti = teksti "Hei NixOS-käyttäjä!";
-  	toolbar-off = true;
-  	startup-screen-off = true;
+	  # ---- Set these
+	  standard-indent = 2; 
+ 	  scratch-viesti = teksti "Hei NixOS-käyttäjä!";
+ 	  toolbar-off = true;
+ 	  startup-screen-off = true;
 
-  	varmuuskopio-kansio = "~/.emacs.d/backup";
-	m-x-provider = "helm-M-x";
+ 	  varmuuskopio-kansio = "~/.emacs.d/backup";
+	  m-x-provider = "helm-M-x";
   };
 in 
 {
@@ -96,8 +101,10 @@ in
       	(setq "inhibit-startup-message" var.startup-not-showing)
  	      (setq "initial-scratch-message" var.scratch-viesti)
       	"(exec-path-from-shell-initialize)"
+        "(server-start)" # Mahdollistaa esim. calc-ohjelman käytön ad hocisti
       	''(setq backup-directory-alist '(("." . "${var.varmuuskopio-kansio}")))''
 	      # "(global-linum-mode t)" # Tämä jätetään pois, koska on ilmeisesti tehoton
+        "(load-theme '${var.theme})"
       
       	(comment "Kieliasetukset")
      	  ''(set-language-environment "UTF-8")''
