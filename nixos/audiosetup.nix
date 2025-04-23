@@ -5,9 +5,10 @@
   musnix = {
     enable = true;
 
-    # VM-kone spesifi! Tämä tulisi vaihtaa
-    # tarvittaessa kun kone vaihtuu
-    soundcardPciId = "00:05.0";
+    # Voi katsoa seuraavasti (Chris McDonoughille creditit):
+    # $ nix-shell -p pciutils
+    # $ lspci | grep -i audio
+    soundcardPciId = "00:1f.3";
 
     # Jos musiikintuotannossa havaitaan ärsyttävää
     # lagia, vaihda tämä tarvittaessa trueksi.
@@ -31,8 +32,11 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    audio.enable = true; # Ei ollut virtuaalikoneessa, kokeillaan saako tällä äänet
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
   };
+
+   systemd.user.services.pipewire-pulse.path = [ pkgs.pulseaudio ];
 
 }
