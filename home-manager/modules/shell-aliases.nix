@@ -14,6 +14,7 @@
   "skriptit" = "devour emacs ~/Projects/salenix/nixos/skriptit.nix";
   "home" = "devour emacs ~/Projects/salenix/home-manager/home.nix";
   "hm" = "home";
+  "dwm" = "devour emacs ~/Projects/dwm/config.def.h";
   "clipboard" = "xclip -selection clipboard"; # Tällä saadaan kopioitua leikepöydälle
   "clip" = "clipboard";
   "aliases" = "e ~/Projects/salenix/home-manager/modules/shell-aliases.nix";

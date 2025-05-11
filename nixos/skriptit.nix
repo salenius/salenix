@@ -4,7 +4,7 @@
 
   # Emacs calculator easily available. If you use a X11 specific tiling WM, tie this
   # to your calculator key on your keyboard (if you have one there)
-  calc = ''devour emacsclient -c -e "(calc)"'';
+  calc = ''emacs -e "calc"'';
   
   # Quickly transform (preferably a short video) into a GIF. You can check the vdieo
   # duration with videon-pituus program
@@ -24,6 +24,18 @@
   which-keypress-x11 = ''
      ${pkgs.xorg.xev}/bin/xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
      '';
+
+  fonts = ''
+  fc-list | awk -F: '{print $2}'
+  '';
+
+  voluumi = ''
+      pactl set-sink-volume 0 "$1"
+      kill -44 $(pidof dwmblocks)
+
+      dunstify -i ~/Kuvat/ikonit/volume-loud.png -t 500 $(pactl get-sink-volume 0 | awk -F/ '{print $2}' | tr -d ' ' | awk '/^[0-9]/ {print}')
+      '';
+
  
 }
   |> lib.mapAttrs (name: value: pkgs.writeShellScriptBin name value)

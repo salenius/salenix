@@ -18,6 +18,7 @@ in
       ./hardware-configuration.nix
       ./audiosetup.nix
       ./skriptit.nix
+      ./moduulit/salasana.nix
       #(import "${home-manager}/nixos")
     ];
 
@@ -25,6 +26,11 @@ in
   hardware.enableAllFirmware = true;
   nixpkgs.config.allowUnfree = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # Bluetooth päälle
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -42,6 +48,12 @@ in
 
   # Set your time zone.
   time.timeZone = "Europe/Helsinki";
+
+  # SSH
+  security.pam = {
+    sshAgentAuth.enable = true;
+    services.login.kwallet.enable = true;
+  };
  
   # Enable flakes
   nix.settings.experimental-features = [
@@ -104,6 +116,8 @@ in
 
   programs.firefox.enable = true;
 
+  services.pcscd.enable = true;
+
   # DWM enabloitu, TODO: Siirrä tämä ja Dmenu yms
   # omaan moduuliinsa
   services.xserver.windowManager.dwm.enable = true;
@@ -117,15 +131,20 @@ in
   services.xserver.windowManager.dwm.package = if custom-dw-path
                                                then (
     pkgs.dwm.overrideAttrs {
-      src = /home/tommi/tmp/dwm;
+      src = /home/tommi/Projects/dwm;
     })
                                                else pkgs.dwm.override {
     patches = [
-      /home/tommi/Projects/salenix/nixos/dwm/01_first_patch.diff
-      /home/tommi/Projects/salenix/nixos/dwm/02_shiftview.diff
+      /home/tommi/Projects/salenix/nixos/dwm/dwm-uusi-patch.diff # Aggregaatti patch kaikista, jotka kehitetty dynamic_dwm:n alla, siisti tätä vielä
+      #/home/tommi/Projects/salenix/nixos/dwm/01_first_patch.diff
+      #/home/tommi/Projects/salenix/nixos/dwm/02_shiftview.diff
     ];
   };
 
+
+  fonts.packages = with pkgs; [
+    noto-fonts-color-emoji
+  ];
   
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -144,19 +163,15 @@ in
      starship # Tekee command promptista mukavn näköisen
      nerdfonts # Starshipin prompteista upean näköisiä
 
-     xclip # Kopioi leikepöydälle
+     # Leikepöydälle kopiointi
+     xclip # X11
+     wl-clipboard # Wayland
 
      qutebrowser # Vaihtoehtoinen selain
 
-     gnupg
-
      ffmpeg-full
 
-     # Salasanojen hallinta
-     pass
-     pinentry-curses # GPG-avaimien generointiin vaadittava
-     gnupg # Generoi GPG-avaimet
-     wl-clipboard # Tallenna salasanat clipboardille suoraan
+     bemenu # Dmenun vaihtoehto
 
      # DWM:n käyttöön
      dmenu
@@ -165,6 +180,7 @@ in
         conf = /home/tommi/Projects/salenix/nixos/dwm/blocks.def.h;
       })
 
+     imagemagick # jotta pywal16 toimisi
      picom # Jotta terminaaleista saisi läpinäkyviä
      # Kun launchataan esim. GUI-ohjelmia terminaalista, ohjelmaa pyörittävä terminaali piilotetaan
      # sen ajaksi kunnes ohjelma suljetaan
@@ -174,6 +190,18 @@ in
      # koska voi testata DWM:llä mäpätä print screen -näppäimen
      # tämän ohjelman käynnistämiseen.
      flameshot
+
+     sshfs
+
+     # Automatisointi
+     dunst 
+     libnotify
+     entr 
+
+     # Musan tekoon
+     ardour
+     qjackctl
+     a2jmidid
 
   ];
 
@@ -185,13 +213,6 @@ in
 
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
-
-  programs.gnupg.agent = {
-      enable = true;
-      pinentryPackage = pkgs.pinentry-curses;
-      enableSSHSupport = true;
-    };
-
 
 
   # Some programs need SUID wrappers, can be configured further or are

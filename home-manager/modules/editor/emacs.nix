@@ -48,26 +48,34 @@ let
 
   # ----- Custom settings here
   packages = epkgs: with epkgs; [
+    use-package
     # Välttämätön, jotta vim-näppäimet
     evil
 
-   # Tällä ikkunoiden välissä pomppailu
+    # Tällä ikkunoiden välissä pomppailu
     ace-window
 
     # Teemat
     dracula-theme
     zenburn-theme
 
-   # Kaikki halutut ohjelmointikielet tähän
-   haskell-mode
-   nix-mode
+    # Kaikki halutut ohjelmointikielet tähän
+    haskell-mode
+    nix-mode
+    lsp-mode # LSP serveri
+    lsp-haskell # Tätä ei ollut mukana lsp-moden paketissa, ladataan erikseen
+    corfu # Autocompletion, company vastaavanlainen
 
-   # Hakee kaikki ympäristömuuttujat Emacsiin
-   # ilman tätä aiheuttaa virheviestin aloituksessa
-   exec-path-from-shell
+    # Hakee kaikki ympäristömuuttujat Emacsiin
+    # ilman tätä aiheuttaa virheviestin aloituksessa
+    exec-path-from-shell
 
-   # Testataan tätä vs counsel
-   helm
+    # Testataan tätä vs counsel
+    helm
+
+    # tarjoaa funktion, jonka avulla Nixin fetch-funktiot saavat oikean
+    # rev/sha:n, kun funktio ajetaan deklaraation kohdalla.
+    nix-update
   ];
 
 
@@ -81,7 +89,7 @@ let
   	startup-not-showing = if startup-screen-off then "t" else "nil";
  	  toolbar-number = if toolbar-off then "-1" else "1";
 
-	  # ---- Set these
+	  # ---- Set these 
 	  standard-indent = 2; 
  	  scratch-viesti = teksti "Hei NixOS-käyttäjä!";
  	  toolbar-off = true;
@@ -169,8 +177,11 @@ in
         (evil-n "åc" "capitalize-word")
 
         (evil-v "C-ö" "comment-box")
-     
 
+        # Ohjelmointi
+        "(global-corfu-mode)" # Autocompletion globaalisti
+        "(corfu-popupinfo-mode)" # kompletionehdotukset popup-valikossa
+        "(setq corfu-auto t)"
       ];
     
   };
