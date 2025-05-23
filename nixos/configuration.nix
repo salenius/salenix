@@ -32,6 +32,9 @@ in
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
+  # Thunderboltin käyttö HP:n telakkaa varten
+  services.hardware.bolt.enable = true;
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -157,8 +160,6 @@ in
      vlc
      #emacs
      alsa-utils
-     feh # Taustakuvat
-     ranger # Konfiguraatiot home-manageriin tulevaisuudessa, nyt tässä toistaiseksi
 
      starship # Tekee command promptista mukavn näköisen
      nerdfonts # Starshipin prompteista upean näköisiä
@@ -186,22 +187,10 @@ in
      # sen ajaksi kunnes ohjelma suljetaan
      devour 
 
-     # Erinomainen kuvakaappaustyökalu. Otetaan käyttöön lisäksi,
-     # koska voi testata DWM:llä mäpätä print screen -näppäimen
-     # tämän ohjelman käynnistämiseen.
-     flameshot
-
-     sshfs
-
-     # Automatisointi
-     dunst 
-     libnotify
-     entr 
-
-     # Musan tekoon
-     ardour
-     qjackctl
-     a2jmidid
+     # Erilaisten tiedostojärjestelmien mounttaus
+     sshfs # SSH
+     exfat # exFAT
+     smartmontools # SSD- ja muiden talletusleveyjen terveyden seuranta
 
   ];
 

@@ -16,6 +16,16 @@ let
   # -- Taustakuvat
   avaruus = "wp-galaxy.jpg";
   taustakuva = avaruus;
+
+  # -- Ekstranäytöt
+  lenovo-monitor = {
+    # Tämän alla olevan saa komennolla pactl list sinks short
+    soundcard.number = builtins.toString 74;
+  };
+
+  hp-kansi-auki = "/proc/acpi/button/lid/LID/state";
+  python = pkgs.python312;
+  
 in
 
 {
@@ -46,7 +56,7 @@ in
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -63,17 +73,46 @@ in
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    pkgs.eza
-    pkgs.groff
-    pkgs.tmux
-    pkgs.bat
-    pkgs.hwinfo # Erinomainen hardwaren/laitteiden tietojen tsekkaukseen
-    pkgs.nil # Nix language server
-    pkgs.dysk # Parempi df ohjelma talletustilan käytön tarkasteluun
-  ] ++ (if tmux-enabled then [
-   pkgs.zsh-prezto # Automaattinen tmux-launch 
+    eza
+    groff
+    tmux
+    bat
+    sxiv # Image viewer, Suckless-ohjelma
+    hwinfo # Erinomainen hardwaren/laitteiden tietojen tsekkaukseen
+    nil # Nix language server
+    dysk # Parempi df ohjelma talletustilan käytön tarkasteluun
+    ncdu # Katso kuinka paljon yksittäiset tiedostot/kansiot vievät talletustilaa
 
-  ] else []);
+    # Automatisointi
+    dunst 
+    libnotify
+    entr 
+
+    # Musan tekoon
+    ardour
+    qjackctl
+    a2jmidid
+
+    feh # Taustakuvat
+    ranger # Konfiguraatiot home-manageriin tulevaisuudessa, nyt tässä toistaiseksi
+
+    # Erinomainen kuvakaappaustyökalu. Otetaan käyttöön lisäksi,
+    # koska voi testata DWM:llä mäpätä print screen -näppäimen
+    # tämän ohjelman käynnistämiseen.
+    flameshot
+
+    # Dokumentaatioon liittyvää
+    pandoc
+    tldr
+
+    # CSV-työkalut
+    xan
+
+    # SSD-levyjen ja muistitikkujen kryptaus
+    cryptsetup
+
+    
+  ];
     
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (pkgs.lib.getName pkg) [
@@ -213,7 +252,11 @@ in
     # - pywallilla saadaan taustakuvasta DWM:n teemavärit, jotka ladataan .Xresources-tiedostoon, kun vanha poistetaan tieltä
     ".xprofile" = {
       text = ''
-      xrandr --output eDP-1 --auto --output DP-1 --primary --left-of DP-2 --output DP-2 --left-of  eDP-1
+      #xrandr --output DP-1-3 --primary --left-of DP-2 --output DP-2 --left-of eDP-1 --output eDP-1
+      ${python}/bin/python ~/skriptit/render-3-monitors.py 2> ~/.local/render-3-python-error
+      find ${hp-kansi-auki} | entr ${python}/bin/python ~/skriptit/render-3-monitors.py &
+
+      pactl set-default-sink ${lenovo-monitor.soundcard.number}
       dunst &
       picom &
       feh --bg-scale --scale-down ${config.home.homeDirectory}/Kuvat/taustakuvat/${taustakuva}

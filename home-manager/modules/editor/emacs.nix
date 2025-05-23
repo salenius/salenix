@@ -8,9 +8,9 @@ let
   evil-macros = ''
 
   (defmacro def-avain (nimi moodi)
-    "Yleistyökalu, jonka avulla käyttäjä voi luoda funktioita, jotka asettavat
-    puolestaan pikanäppäinkomennon tietyn tilan funktioille. NIMI on funktion nimi,
-    jonka makro palauttaa, MOODI on puolesta mode, jolle funktio voi luoda näppäinyhdistelmän."
+    "yleistyökalu, jonka avulla käyttäjä voi luoda funktioita, jotka asettavat
+    puolestaan pikanäppäinkomennon tietyn tilan funktioille. nimi on funktion nimi,
+    jonka makro palauttaa, moodi on puolesta mode, jolle funktio voi luoda näppäinyhdistelmän."
     `(defun ,nimi (key func)
 	 (define-key ,moodi (kbd key) func)))
 
@@ -76,6 +76,8 @@ let
     # tarjoaa funktion, jonka avulla Nixin fetch-funktiot saavat oikean
     # rev/sha:n, kun funktio ajetaan deklaraation kohdalla.
     nix-update
+
+    smartparens # Sulkeiden käyttö
   ];
 
 
@@ -97,6 +99,10 @@ let
 
  	  varmuuskopio-kansio = "~/.emacs.d/backup";
 	  m-x-provider = "helm-M-x";
+
+    ## How undos are done in the evil-mode 
+    undo-system = "undo-redo";
+
   };
 in 
 {
@@ -109,36 +115,39 @@ in
       	(setq "inhibit-startup-message" var.startup-not-showing)
  	      (setq "initial-scratch-message" var.scratch-viesti)
       	"(exec-path-from-shell-initialize)"
-        "(server-start)" # Mahdollistaa esim. calc-ohjelman käytön ad hocisti
+        "(server-start)" # mahdollistaa esim. calc-ohjelman käytön ad hocisti
       	''(setq backup-directory-alist '(("." . "${var.varmuuskopio-kansio}")))''
-	      # "(global-linum-mode t)" # Tämä jätetään pois, koska on ilmeisesti tehoton
+	      # "(global-linum-mode t)" # tämä jätetään pois, koska on ilmeisesti tehoton
         "(load-theme '${var.theme})"
       
-      	(comment "Kieliasetukset")
-     	  ''(set-language-environment "UTF-8")''
+      	(comment "kieliasetukset")
+     	  ''(set-language-environment "utf-8")''
      	  "(set-default-coding-systems 'utf-8)"
-     	  ''(set-locale-environment "fi_FI.UTF-8")''
-     	  ''(setenv "LANG" "en_US.UTF-8")''
-     	  ''(setenv "LC_ALL" "en_US.UTF-8")''
-     	  ''(setenv "LC_CTYPE" "en_US.UTF-8")''
+     	  ''(set-locale-environment "fi_fi.utf-8")''
+     	  ''(setenv "lang" "en_us.utf-8")''
+     	  ''(setenv "lc_all" "en_us.utf-8")''
+     	  ''(setenv "lc_ctype" "en_us.utf-8")''
 
-     	  (comment "Vim-näppäimet")
+     	  (comment "vim-näppäimet")
      	  "(evil-mode 1)"
+        "(evil-set-undo-system '${var.undo-system})"
         evil-macros
 	      (evil-n "C-ö" "comment-line")
 	      (evil-n "ål" "eval-last-sexp")
-	      (evil-n "åL" "eval-last-sexp-and-replace-it-by-result")
-	      (evil-n "å TAB" "indent-region")
+	      (evil-n "ål" "eval-last-sexp-and-replace-it-by-result")
+	      (evil-n "å tab" "indent-region")
 	      (evil-i "C-ö" "evil-normal-state")
 
-     	  ";; M-x"
+     	  ";; m-x"
 	      (evil-n "åe" var.m-x-provider)
 	      (evil-i "åe" var.m-x-provider)
 	      (evil-v "åe" var.m-x-provider)
 	      (evil-m "åe" var.m-x-provider)
 
-        ## Evil-keybindigeja lisää
+        ## evil-keybindigeja lisää
         (evil-n "§" "end-of-line")
+        (evil-n "gö" "beginning-of-line")
+        (evil-n "gä" "end-of-line")
         (evil-n "zj" "evil-scroll-down")
         
         (evil-n "zk" "evil-scroll-up")
@@ -147,20 +156,20 @@ in
 
         (evil-n "ås" "save-buffer")
 
-        # Tämä on toistaiseksi kommentoitu,
+        # tämä on toistaiseksi kommentoitu,
         # koska counselia ei ole asennettu.
         
         # (evil-n "öb" "counsel-ibuffer")
 
-        # Buffereiden valikoimeen counselin sijasta
+        # buffereiden valikoimeen counselin sijasta
         # helmin oma versio
-        (evil-n "öb" "helm-buffers-list")
+       (evil-n "öb" "helm-buffers-list")
 
-        # Tämä on ollut aiemmin kill-this-buffer
-        # mutta Emacsin uuden version myötä tämän
+        # tämä on ollut aiemmin kill-this-buffer
+        # mutta emacsin uuden version myötä tämän
         # käyttö sellaisenaan evil-moden kautta
         # aiheuttaa virheviestin eikä tapa bufferia.
-        # Yritetään löytää pitkällä aikavälillä toimiva
+        # yritetään löytää pitkällä aikavälillä toimiva
         # ratkaisu, missä bufferia ei tarvitse spesifioida.
         (evil-n "öä" "kill-buffer")
 
@@ -176,12 +185,25 @@ in
 
         (evil-n "åc" "capitalize-word")
 
-        (evil-v "C-ö" "comment-box")
+        (evil-n "-" "evil-search-forward")
+        (evil-n "_" "evil-search-backward")
 
-        # Ohjelmointi
-        "(global-corfu-mode)" # Autocompletion globaalisti
+        (evil-v "c-ö" "comment-box")
+
+        # ohjelmointi
+        "(global-corfu-mode)" # autocompletion globaalisti
         "(corfu-popupinfo-mode)" # kompletionehdotukset popup-valikossa
         "(setq corfu-auto t)"
+
+        # smartparens - sulkeet
+        (evil-n "äs" "sp-wrap-round")
+        (evil-v "äs" "sp-wrap-round")
+
+        (evil-n "äh" "sp-wrap-square")
+        (evil-v "äh" "sp-wrap-square")
+
+        (evil-n "äa" "sp-wrap-curly")
+        (evil-v "äa" "sp-wrap-curly")
       ];
     
   };
